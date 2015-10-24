@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings
+	<graphics
+		<setting name="grph_antialiasing"true
+		</setting>
+		<setting name="grph_maxfps"60
+		</setting>
+		<setting name="grph_screenmode"0
+		</setting>
+	</graphics>
+</settings>
