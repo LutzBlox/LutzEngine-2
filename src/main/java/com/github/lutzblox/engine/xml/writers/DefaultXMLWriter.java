@@ -55,6 +55,8 @@ public class DefaultXMLWriter extends XMLWriter {
 			}
 
 			if (tag.getValue() != null) {
+				
+				content += ">";
 
 				String value = tag.getValue();
 
@@ -68,6 +70,8 @@ public class DefaultXMLWriter extends XMLWriter {
 				contents += "\n" + (getWriterParameters().getFormatOutput() ? indent : "") + "</" + tag.getName() + ">";
 
 			} else if (tag.hasChildren()) {
+				
+				content += ">";
 
 				for (XMLTag child : tag.getChildren()) {
 
