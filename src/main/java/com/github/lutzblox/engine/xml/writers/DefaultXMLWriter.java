@@ -56,7 +56,7 @@ public class DefaultXMLWriter extends XMLWriter {
 
 			if (tag.getValue() != null) {
 				
-				content += ">";
+				contents += ">";
 
 				String value = tag.getValue();
 
@@ -71,7 +71,7 @@ public class DefaultXMLWriter extends XMLWriter {
 
 			} else if (tag.hasChildren()) {
 				
-				content += ">";
+				contents += ">";
 
 				for (XMLTag child : tag.getChildren()) {
 
