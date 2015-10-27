@@ -2,6 +2,7 @@ package com.github.lutzblox.engine.screen;
 
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.util.Set;
 import java.util.TreeSet;
@@ -39,7 +40,9 @@ public class Resolution implements Comparable<Resolution> {
 		return new Integer(this.getWidth()).compareTo(o.getWidth());
 	}
 
-	public static Resolution[] getSupportedResolutions(GraphicsDevice gd) {
+	public static Resolution[] getSupportedResolutions() {
+
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
 		Set<Resolution> res = new TreeSet<Resolution>();
 
@@ -51,8 +54,10 @@ public class Resolution implements Comparable<Resolution> {
 		return res.toArray(new Resolution[res.size()]);
 	}
 
-	public static Resolution[] getSupportedWindowedResolutions(GraphicsDevice gd) {
+	public static Resolution[] getSupportedWindowedResolutions() {
 
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		
 		Rectangle maxWindowSize = Screen.getMaximumWindowSize();
 		int maxWidth = maxWindowSize.width;
 		int maxHeight = maxWindowSize.height;

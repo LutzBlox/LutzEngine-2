@@ -46,7 +46,7 @@ public class SettingsFileHandler {
 
 										LutzEngine.getGraphicsSettingsManager().changeSetting(
 												Keys.GRAPHICS_ANTIALIASING,
-												Boolean.parseBoolean(subsetting.getValue()));
+												Boolean.parseBoolean(subsetting.getValue().trim()));
 
 									} catch (Exception e) {
 
@@ -59,7 +59,7 @@ public class SettingsFileHandler {
 									try {
 
 										LutzEngine.getGraphicsSettingsManager().changeSetting(Keys.GRAPHICS_MAXIMUM_FPS,
-												Integer.parseInt(subsetting.getValue()));
+												Integer.parseInt(subsetting.getValue().trim()));
 
 									} catch (Exception e) {
 
@@ -72,7 +72,7 @@ public class SettingsFileHandler {
 									try {
 
 										LutzEngine.getGraphicsSettingsManager().changeSetting(Keys.GRAPHICS_SCREENMODE,
-												Integer.parseInt(subsetting.getValue()));
+												Integer.parseInt(subsetting.getValue().trim()));
 
 									} catch (Exception e) {
 

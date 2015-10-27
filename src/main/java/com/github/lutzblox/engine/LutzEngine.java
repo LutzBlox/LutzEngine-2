@@ -1,11 +1,10 @@
 package com.github.lutzblox.engine;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Calendar;
 
 import com.github.lutzblox.engine.debugging.DebugConfig;
+import com.github.lutzblox.engine.exceptions.CrashDumpHandler;
 import com.github.lutzblox.engine.logging.LogChannel;
 import com.github.lutzblox.engine.logging.Logger;
 import com.github.lutzblox.engine.logging.Logger.Level;
@@ -18,6 +17,7 @@ import com.github.lutzblox.engine.logging.channels.ListChannel;
 import com.github.lutzblox.engine.logging.channels.filters.DebugFilter;
 import com.github.lutzblox.engine.logging.channels.filters.IssueFilter;
 import com.github.lutzblox.engine.logging.channels.filters.LevelFilter;
+import com.github.lutzblox.engine.screen.Resolution;
 import com.github.lutzblox.engine.screen.Screen;
 import com.github.lutzblox.engine.settings.SettingsFileHandler;
 import com.github.lutzblox.engine.settings.SettingsManager;
@@ -40,11 +40,13 @@ public class LutzEngine {
 	private static Thread main;
 
 	private static Throwable crashError = null;
+	
+	private static long startTime = 0, runTime = 0;
 
 	public static void setGameName(String name) {
 
 		gameName = name;
-		
+
 		Screen.refreshTitle();
 	}
 
@@ -61,6 +63,8 @@ public class LutzEngine {
 	}
 
 	public static void performSetup() {
+		
+		startTime = System.currentTimeMillis();
 
 		new File("logs").mkdirs();
 
@@ -94,6 +98,30 @@ public class LutzEngine {
 
 		Screen.performOSSetup();
 
+		if (DebugConfig.isEnabled() && DebugConfig.getPrintResolutions()) {
+
+			Resolution[] fullscr = Resolution.getSupportedResolutions();
+
+			String fullscrStr = "";
+
+			for (int i = 0; i < fullscr.length; i++) {
+
+				if (i > 0) {
+
+					fullscrStr += ", ";
+				}
+
+				Resolution r = fullscr[i];
+
+				fullscrStr += r.getWidth() + "x" + r.getHeight();
+			}
+
+			String windowedStr = (int) Screen.getMaximumWindowSize().getWidth()+"x"+(int) Screen.getMaximumWindowSize().getHeight();
+			
+			getEngineLogger().debug("Resolutions available for fullscreen modes: "+fullscrStr);
+			getEngineLogger().debug("Maximum resolution allowed for windowed mode: "+windowedStr);
+		}
+
 		getEngineLogger().info("Loading settings...");
 
 		graphicsSettings = new SettingsManager(SettingsManager.Categories.GRAPHICS);
@@ -102,13 +130,13 @@ public class LutzEngine {
 		graphicsSettings.addSetting(SettingsManager.Keys.GRAPHICS_SCREENMODE, 0);
 
 		try {
-			
+
 			SettingsFileHandler.loadSettings();
-			
+
 		} catch (Exception e) {
 
 			getEngineLogger().warn("Settings could not be loaded!  Defaulting all settings...");
-			
+
 			getEngineLogger().logException(e);
 		}
 
@@ -125,6 +153,8 @@ public class LutzEngine {
 
 					Screen.setup(Integer.parseInt(
 							getGraphicsSettingsManager().retrieveSetting(Keys.GRAPHICS_SCREENMODE).toString()));
+					
+					int i = 1/0;
 
 				} catch (Exception e) {
 
@@ -165,67 +195,9 @@ public class LutzEngine {
 		shutdownEngine();
 	}
 
-	private static void dumpEngine(Throwable t) {
-
-		try {
-
-			File crashDumpDir = new File("crash-dumps");
-			crashDumpDir.mkdirs();
-
-			File crashDump = new File("crash-dumps/dump-" + getDumpTimestampFormatted() + ".txt");
-			crashDump.createNewFile();
-
-			PrintStream ps = new PrintStream(crashDump);
-
-			if (t != null) {
-
-				ps.println("##############################");
-				ps.println("##  FULL ERROR STACK TRACE  ##");
-				ps.println("##############################");
-				ps.println();
-
-				t.printStackTrace(ps);
-
-				ps.println();
-
-			} else {
-
-				ps.println("#########################");
-				ps.println("##  NO ERROR DETECTED  ##");
-				ps.println("#########################");
-				ps.println();
-			}
-
-			ps.println("#######################");
-			ps.println("##  FULL ENGINE LOG  ##");
-			ps.println("#######################");
-			ps.println();
-
-			dumpCh.setPrintStream(ps);
-
-			dumpCh.printList();
-
-			dumpCh.close();
-
-		} catch (Exception e) {
-
-			System.err.println("An error occurred while creating the crash dump file!");
-
-			e.printStackTrace();
-		}
-	}
-
-	private static String getDumpTimestampFormatted() {
-
-		Calendar c = Calendar.getInstance();
-
-		String str = (c.get(Calendar.MONTH) + 1) + "-" + c.get(Calendar.DATE) + "-" + c.get(Calendar.YEAR) + "_"
-				+ c.get(Calendar.HOUR_OF_DAY) + "-" + c.get(Calendar.MINUTE) + "-" + c.get(Calendar.SECOND);
-
-		return str;
-	}
-
 	public static void shutdownEngine() {
+		
+		runTime = System.currentTimeMillis()-startTime;
 
 		running = false;
 
@@ -234,9 +206,9 @@ public class LutzEngine {
 		getEngineLogger().info("Saving settings...");
 
 		try {
-			
+
 			SettingsFileHandler.saveSettings();
-			
+
 		} catch (Exception e) {
 
 			LutzEngine.getEngineLogger().warn("Settings were not able to be saved!");
@@ -292,7 +264,7 @@ public class LutzEngine {
 
 		if (crashed) {
 
-			dumpEngine(crashError);
+			CrashDumpHandler.dump(crashError, dumpCh);
 		}
 
 		System.exit(crashed ? 1 : 0);
@@ -327,5 +299,10 @@ public class LutzEngine {
 	public static boolean isRunning() {
 
 		return running;
+	}
+	
+	public static long getRunTimeMillis(){
+		
+		return (running ? System.currentTimeMillis()-startTime : runTime);
 	}
 }

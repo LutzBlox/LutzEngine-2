@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.lutzblox.engine.LutzEngine;
+import com.github.lutzblox.engine.debugging.DebugConfig;
 import com.github.lutzblox.engine.exceptions.SettingException;
 
 public class SettingsManager {
@@ -75,8 +76,11 @@ public class SettingsManager {
 
 			settings.put(key, defaultValue);
 
-			LutzEngine.getEngineLogger().debug("Setting '" + key.getKey() + "' for settings manager '" + accepted.getName()
-					+ "' added with default value: " + defaultValue);
+			if (DebugConfig.isEnabled() && DebugConfig.getPrintSettings()) {
+
+				LutzEngine.getEngineLogger().debug("Setting '" + key.getKey() + "' for settings manager '"
+						+ accepted.getName() + "' added with default value: " + defaultValue);
+			}
 
 		} else {
 
@@ -90,8 +94,11 @@ public class SettingsManager {
 
 			settings.put(key, value);
 
-			LutzEngine.getEngineLogger()
-					.debug("Setting '" + key.getKey() + "' for settings manager '" + accepted.getName() + "' set to: " + value);
+			if (DebugConfig.isEnabled() && DebugConfig.getPrintSettings()) {
+
+				LutzEngine.getEngineLogger().debug("Setting '" + key.getKey() + "' for settings manager '"
+						+ accepted.getName() + "' set to: " + value);
+			}
 		}
 	}
 

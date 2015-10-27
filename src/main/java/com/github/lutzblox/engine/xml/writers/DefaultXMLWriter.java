@@ -67,7 +67,7 @@ public class DefaultXMLWriter extends XMLWriter {
 
 				contents += value;
 
-				contents += "\n" + (getWriterParameters().getFormatOutput() ? indent : "") + "</" + tag.getName() + ">";
+				contents += "</" + tag.getName() + ">";
 
 			} else if (tag.hasChildren()) {
 				

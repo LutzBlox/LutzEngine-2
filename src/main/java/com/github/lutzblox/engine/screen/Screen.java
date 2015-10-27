@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -31,8 +32,16 @@ public class Screen {
 	private static Rectangle maxWindowSize = new Rectangle(0, 0);
 
 	public static void performOSSetup() {
-
-		maxWindowSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		
+		JFrame utils = new JFrame();
+		JPanel utilPanel = new JPanel();
+		utilPanel.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+		utils.add(utilPanel);
+		utils.pack();
+		
+		maxWindowSize = utilPanel.getBounds();
+		
+		utils.dispose();
 	}
 
 	public static void setup(int screenMode) {
