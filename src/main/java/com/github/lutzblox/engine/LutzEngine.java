@@ -5,6 +5,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 
 import com.github.lutzblox.engine.debugging.DebugConfig;
 import com.github.lutzblox.engine.exceptions.CrashDumpHandler;
+import com.github.lutzblox.engine.info.EngineInfo;
 import com.github.lutzblox.engine.logging.LogChannel;
 import com.github.lutzblox.engine.logging.Logger;
 import com.github.lutzblox.engine.logging.Logger.Level;
@@ -93,6 +94,10 @@ public class LutzEngine {
 		dumpCh = new ListChannel(null, "dump-log");
 
 		engineLogger = LoggerFactory.getLogger("engine");
+		
+		getEngineLogger().info("Loading info...");
+		
+		EngineInfo.loadInfoIntoSystem();
 
 		getEngineLogger().info("Performing OS-specific setup...");
 

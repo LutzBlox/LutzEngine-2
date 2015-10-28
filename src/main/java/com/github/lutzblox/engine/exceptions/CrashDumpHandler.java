@@ -28,6 +28,12 @@ public class CrashDumpHandler {
 			
 			ps.println("Error Type: "+(t != null ? t.getClass().getSimpleName() : "-"));
 			ps.println();
+
+			ps.println("###########################");
+			ps.println("##  RUNTIME INFORMATION  ##");
+			ps.println("###########################");
+			ps.println();
+			
 			ps.println("Time Running: "+LutzEngine.getRunTimeMillis()+" milliseconds");
 			ps.println();
 
@@ -49,6 +55,15 @@ public class CrashDumpHandler {
 				ps.println("#########################");
 				ps.println();
 			}
+
+			ps.println("##########################");
+			ps.println("##  ENGINE INFORMATION  ##");
+			ps.println("##########################");
+			ps.println();
+			
+			ps.println("LutzEngine Version: "+System.getProperty("lutzengine.version"));
+			ps.println("LutzEngine Build: "+System.getProperty("lutzengine.build"));
+			ps.println();
 
 			ps.println("#######################");
 			ps.println("##  FULL ENGINE LOG  ##");

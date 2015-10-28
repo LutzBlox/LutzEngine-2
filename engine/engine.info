@@ -1,0 +1,8 @@
+# To add values, follow the syntax NAME=VALUE and add entries below.  Then, inside Java, retrieve the values by calling System.getProperty(NAME);
+
+####################
+## DEFAULT VALUES ##
+####################
+
+lutzengine.version=0.0.1
+lutzengine.build=1
