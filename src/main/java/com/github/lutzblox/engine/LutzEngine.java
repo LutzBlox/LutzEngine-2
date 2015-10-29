@@ -18,6 +18,8 @@ import com.github.lutzblox.engine.logging.channels.ListChannel;
 import com.github.lutzblox.engine.logging.channels.filters.DebugFilter;
 import com.github.lutzblox.engine.logging.channels.filters.IssueFilter;
 import com.github.lutzblox.engine.logging.channels.filters.LevelFilter;
+import com.github.lutzblox.engine.plugins.Plugin;
+import com.github.lutzblox.engine.plugins.loading.PluginLoader;
 import com.github.lutzblox.engine.screen.Resolution;
 import com.github.lutzblox.engine.screen.Screen;
 import com.github.lutzblox.engine.settings.SettingsFileHandler;
@@ -25,6 +27,8 @@ import com.github.lutzblox.engine.settings.SettingsManager;
 import com.github.lutzblox.engine.settings.SettingsManager.Keys;
 
 public class LutzEngine {
+
+	private static long startTime = 0, runTime = 0;
 
 	private static String gameName = "";
 
@@ -41,8 +45,8 @@ public class LutzEngine {
 	private static Thread main;
 
 	private static Throwable crashError = null;
-	
-	private static long startTime = 0, runTime = 0;
+
+	private static Plugin[] plugins = new Plugin[0];
 
 	public static void setGameName(String name) {
 
@@ -64,7 +68,7 @@ public class LutzEngine {
 	}
 
 	public static void performSetup() {
-		
+
 		startTime = System.currentTimeMillis();
 
 		new File("logs").mkdirs();
@@ -94,9 +98,9 @@ public class LutzEngine {
 		dumpCh = new ListChannel(null, "dump-log");
 
 		engineLogger = LoggerFactory.getLogger("engine");
-		
+
 		getEngineLogger().info("Loading info...");
-		
+
 		EngineInfo.loadInfoIntoSystem();
 
 		getEngineLogger().info("Performing OS-specific setup...");
@@ -121,10 +125,11 @@ public class LutzEngine {
 				fullscrStr += r.getWidth() + "x" + r.getHeight();
 			}
 
-			String windowedStr = (int) Screen.getMaximumWindowSize().getWidth()+"x"+(int) Screen.getMaximumWindowSize().getHeight();
-			
-			getEngineLogger().debug("Resolutions available for fullscreen modes: "+fullscrStr);
-			getEngineLogger().debug("Maximum resolution allowed for windowed mode: "+windowedStr);
+			String windowedStr = (int) Screen.getMaximumWindowSize().getWidth() + "x"
+					+ (int) Screen.getMaximumWindowSize().getHeight();
+
+			getEngineLogger().debug("Resolutions available for fullscreen modes: " + fullscrStr);
+			getEngineLogger().debug("Maximum resolution allowed for windowed mode: " + windowedStr);
 		}
 
 		getEngineLogger().info("Loading settings...");
@@ -150,6 +155,22 @@ public class LutzEngine {
 			@Override
 			public void run() {
 
+				// Load plugins
+				
+				getEngineLogger().info("Loading plugins...");
+
+				plugins = PluginLoader.loadPlugins();
+
+				if (plugins.length > 0) {
+
+					getEngineLogger().info("Found " + plugins.length + " plugin(s)!");
+				}
+
+				for (Plugin p : plugins) {
+
+					p.load();
+				}
+
 				// Setup screen
 
 				try {
@@ -158,8 +179,6 @@ public class LutzEngine {
 
 					Screen.setup(Integer.parseInt(
 							getGraphicsSettingsManager().retrieveSetting(Keys.GRAPHICS_SCREENMODE).toString()));
-					
-					int i = 1/0;
 
 				} catch (Exception e) {
 
@@ -201,12 +220,19 @@ public class LutzEngine {
 	}
 
 	public static void shutdownEngine() {
-		
-		runTime = System.currentTimeMillis()-startTime;
+
+		runTime = System.currentTimeMillis() - startTime;
 
 		running = false;
 
 		getEngineLogger().info("Shutting down engine...");
+
+		getEngineLogger().info("Unloading plugins...");
+
+		for (Plugin p : plugins) {
+
+			p.unload();
+		}
 
 		getEngineLogger().info("Saving settings...");
 
@@ -305,9 +331,14 @@ public class LutzEngine {
 
 		return running;
 	}
+
+	public static long getRunTimeMillis() {
+
+		return (running ? System.currentTimeMillis() - startTime : runTime);
+	}
 	
-	public static long getRunTimeMillis(){
+	public static Plugin[] getPlugins(){
 		
-		return (running ? System.currentTimeMillis()-startTime : runTime);
+		return plugins;
 	}
 }

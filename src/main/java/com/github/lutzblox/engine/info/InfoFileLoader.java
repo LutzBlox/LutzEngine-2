@@ -1,14 +1,25 @@
 package com.github.lutzblox.engine.info;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 public class InfoFileLoader {
 
-	public static void load(File file) throws FileNotFoundException {
+	public static void load(File file) throws IOException {
 
-		Scanner sc = new Scanner(file);
+		FileInputStream stream = new FileInputStream(file);
+
+		load(stream);
+
+		stream.close();
+	}
+
+	public static void load(InputStream stream) {
+
+		Scanner sc = new Scanner(stream);
 
 		while (sc.hasNextLine()) {
 

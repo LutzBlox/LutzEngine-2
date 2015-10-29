@@ -7,8 +7,8 @@ public class EngineTest {
 	public static void main(String[] args){
 		
 		DebugConfig.enable(true);
-		DebugConfig.setPrintResolutions(true);
-		DebugConfig.setPrintSettings(true);
+		//DebugConfig.setPrintResolutions(true);
+		//DebugConfig.setPrintSettings(true);
 		LutzEngine.setGameName("Test Game");
 		LutzEngine.startEngine();
 	}

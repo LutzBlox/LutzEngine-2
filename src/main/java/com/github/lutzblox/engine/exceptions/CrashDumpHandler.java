@@ -6,6 +6,7 @@ import java.util.Calendar;
 
 import com.github.lutzblox.engine.LutzEngine;
 import com.github.lutzblox.engine.logging.channels.ListChannel;
+import com.github.lutzblox.engine.plugins.Plugin;
 
 public class CrashDumpHandler {
 
@@ -25,16 +26,37 @@ public class CrashDumpHandler {
 			ps.println("##  GENERAL INFORMATION  ##");
 			ps.println("###########################");
 			ps.println();
-			
-			ps.println("Error Type: "+(t != null ? t.getClass().getSimpleName() : "-"));
+
+			ps.println("Error Type: " + (t != null ? t.getClass().getSimpleName() : "-"));
 			ps.println();
 
 			ps.println("###########################");
 			ps.println("##  RUNTIME INFORMATION  ##");
 			ps.println("###########################");
 			ps.println();
-			
-			ps.println("Time Running: "+LutzEngine.getRunTimeMillis()+" milliseconds");
+
+			ps.println("Time Running: " + LutzEngine.getRunTimeMillis() + " milliseconds");
+			ps.println();
+
+			ps.println("#########################");
+			ps.println("##  INSTALLED PLUGINS  ##");
+			ps.println("#########################");
+			ps.println();
+
+			Plugin[] plugins = LutzEngine.getPlugins();
+
+			if (plugins.length > 0) {
+
+				for (Plugin p : plugins) {
+
+					ps.println(p.getName() + " (ID: " + p.getId() + ")");
+				}
+
+			} else {
+
+				ps.println("No plugins installed");
+			}
+
 			ps.println();
 
 			if (t != null) {
@@ -60,9 +82,9 @@ public class CrashDumpHandler {
 			ps.println("##  ENGINE INFORMATION  ##");
 			ps.println("##########################");
 			ps.println();
-			
-			ps.println("LutzEngine Version: "+System.getProperty("lutzengine.version"));
-			ps.println("LutzEngine Build: "+System.getProperty("lutzengine.build"));
+
+			ps.println("LutzEngine Version: " + System.getProperty("lutzengine.version"));
+			ps.println("LutzEngine Build: " + System.getProperty("lutzengine.build"));
 			ps.println();
 
 			ps.println("#######################");
@@ -73,7 +95,7 @@ public class CrashDumpHandler {
 			dumpCh.setPrintStream(ps);
 
 			dumpCh.printList();
-			
+
 			ps.println();
 			ps.println("##########################");
 			ps.println("##  SYSTEM INFORMATION  ##");
@@ -85,7 +107,7 @@ public class CrashDumpHandler {
 			ps.println("OS Architecture: " + System.getProperty("os.arch"));
 			ps.println("Java Version: " + System.getProperty("java.version"));
 			ps.println("Java Vendor: " + System.getProperty("java.vendor"));
-			
+
 			dumpCh.close();
 
 		} catch (Exception e) {

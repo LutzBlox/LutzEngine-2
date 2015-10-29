@@ -1,7 +1,7 @@
 package com.github.lutzblox.engine.info;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import com.github.lutzblox.engine.LutzEngine;
 
@@ -15,10 +15,10 @@ public class EngineInfo {
 
 			InfoFileLoader.load(info);
 
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 
 			LutzEngine.getEngineLogger()
-					.warn("No engine.info file found!  Errors may occur as a result of missing information!");
+					.warn("Could not load engine.info file!  Errors may occur as a result of missing information!");
 		}
 	}
 }
